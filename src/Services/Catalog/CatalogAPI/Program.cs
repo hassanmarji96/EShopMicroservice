@@ -7,9 +7,13 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 });
 
+var connectionString = builder.Configuration.GetConnectionString("Database")!;
+Console.WriteLine($"=== CONNECTION STRING: {connectionString} ===");
+Console.WriteLine($"=== ENVIRONMENT: {builder.Environment.EnvironmentName} ===");
+
 builder.Services.AddMarten(options =>
 {
-    options.Connection(builder.Configuration.GetConnectionString("Database")!);
+    options.Connection(connectionString);
 }).UseLightweightSessions();
 
 var app = builder.Build();
