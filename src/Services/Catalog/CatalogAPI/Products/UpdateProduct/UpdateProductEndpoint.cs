@@ -12,7 +12,7 @@ namespace CatalogAPI.Products.UpdateProduct
         {
             app.MapPut("/products", async(UpdateProductRequest request, ISender sender) =>
             {
-                var command = request.Adapt<UpdateProductRequestCommand>();
+                var command = request.Adapt<UpdateProductCommand>();
                 var result = await sender.Send(command);
                 var response = result.Adapt<UpdateProductResponse>();
                 return Results.Ok(response);
