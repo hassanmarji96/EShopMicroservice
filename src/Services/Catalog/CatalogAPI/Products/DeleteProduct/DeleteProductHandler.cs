@@ -22,7 +22,7 @@ namespace CatalogAPI.Products.DeleteProduct
             if(product is null)
             {
                 logger.LogInformation("Product not found");
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(command.Id);
             }
 
             session.Delete<Product>(product);

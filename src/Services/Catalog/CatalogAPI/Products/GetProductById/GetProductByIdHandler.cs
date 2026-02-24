@@ -12,7 +12,7 @@
             if (product is null)
             {
                 logger.LogInformation($"Product with id {query.Id} not found");
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(query.Id);
             }
             return new GetProductByIdResult(product);
         }
