@@ -14,15 +14,12 @@
         }
     }
 
-    internal class CreateProductCommandHandler (IDocumentSession session, IValidator<CreateProductCommand> validator) : ICommandHandler<CreateProductCommand, CreateProductResult>
+    internal class CreateProductCommandHandler (IDocumentSession session, ILogger<CreateProductCommandHandler> logger) 
+        : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
-            var result = await validator.ValidateAsync(command, cancellationToken);
-            var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
-            if (errors.Any())
-                throw new ValidationException(errors.FirstOrDefault());
-
+            logger.LogInformation("Creating new product...");
             var product = new Product
             {
                 Id = Guid.NewGuid(),

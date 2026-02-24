@@ -13,8 +13,7 @@
                 // Mappo la richiesta dell'oggetto in arrivo, in modo che sia conforme al comando che mi aspetto di ricevere all'interno del mio handler,
                 // in questo modo non devo preoccuparmi di eventuali differenze tra i due oggetti, e posso semplicemente adattarli l'uno all'altro.
                 var command = request.Adapt<CreateProductCommand>();
-                // Invio il comando al mio handler, che si occuperà di eseguire la logica di business necessaria per creare un nuovo prodotto.
-                var result = await sender.Send(command);
+                var result = await sender.Send(command); // triggero il mediator (building blocks) inviando il comando
                 // Mappo il risultato ottenuto dall'handler in un oggetto di risposta, che sarà restituito al client che ha effettuato la richiesta.
                 var response = result.Adapt<CreateProductResponse>();
 
