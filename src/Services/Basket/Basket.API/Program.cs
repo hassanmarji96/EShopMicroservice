@@ -22,9 +22,14 @@ builder.Services.AddMarten(options =>
     options.Schema.For<ShoppingCart>().Identity(x => x.UserName);
 }).UseLightweightSessions();
 
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+//builder.Services.AddHealthChecks()
+//    .AddNpgSql(connectionString);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapCarter();
+
+app.UseExceptionHandler(opt => { });
 
 app.Run();
