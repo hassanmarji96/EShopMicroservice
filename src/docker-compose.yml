@@ -1,6 +1,8 @@
 services:
   catalogdb:
     image: postgres:17-alpine
+  basketdb:
+    image: postgres:17-alpine
 
   catalogapi:
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -10,6 +12,7 @@ services:
 
 volumes:
   postgres_catalog:
+  postgres_basket:
 
 
 
