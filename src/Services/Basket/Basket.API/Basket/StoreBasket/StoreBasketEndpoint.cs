@@ -13,7 +13,7 @@ namespace Basket.API.Basket.StoreBasket
                 var result = await sender.Send(command);
                 var response = result.Adapt<StoreBasketResponse>();
 
-                return Results.Created($"/basket/{response.Username}", response);
+                return Results.Created($"/basket/{response.UserName}", response);
             })
             .WithName("StoreBasket")
             .Produces<StoreBasketResponse>(StatusCodes.Status201Created)
