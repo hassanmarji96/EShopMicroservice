@@ -1,14 +1,26 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var assembly = typeof(Program).Assembly;
 
 builder.Services.AddCarter();
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssembly(assembly);
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
     cfg.AddOpenBehavior(typeof(LoggingBehaviour<,>));
 });
+
+builder.Services.AddValidatorsFromAssembly(assembly);
+
+var connectionString = builder.Configuration.GetConnectionString("Database")!;
+builder.Services.AddMarten(options =>
+{
+    options.Connection(connectionString);
+    // specifico che la mia PK è il campo username, altrimenti marten si aspetta un campo Id di tipo guid
+    options.Schema.For<ShoppingCart>().Identity(x => x.UserName);
+}).UseLightweightSessions();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
