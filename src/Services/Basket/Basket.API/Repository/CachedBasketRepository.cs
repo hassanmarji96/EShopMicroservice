@@ -1,4 +1,6 @@
-﻿
+﻿using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
+
 namespace Basket.API.Repository
 {
     /// <summary>
@@ -8,21 +10,31 @@ namespace Basket.API.Repository
     /// Successivamente estenderemo le funzionalità della classe CachedBasketRepository implementando il pattern decorator.
     /// </summary>
     /// <param name="basketRepository"></param>
-    public class CachedBasketRepository(IBasketRepository basketRepository) : IBasketRepository
+    public class CachedBasketRepository(IBasketRepository basketRepository, IDistributedCache cache) : IBasketRepository
     {
         public async Task<ShoppingCart> GetBasketAsync(string userName, CancellationToken cancellationToken = default)
         {
-            return await basketRepository.GetBasketAsync(userName, cancellationToken);
+            var cacheBasket = await cache.GetStringAsync(userName, cancellationToken);
+            if (!string.IsNullOrEmpty(cacheBasket))
+                return JsonSerializer.Deserialize<ShoppingCart>(cacheBasket)!;
+
+            var basket = await basketRepository.GetBasketAsync(userName, cancellationToken);
+            await cache.SetStringAsync(userName, JsonSerializer.Serialize(basket), cancellationToken);
+            return basket;
         }
 
         public async Task<ShoppingCart> StoreBasketAsync(ShoppingCart basket, CancellationToken cancellationToken = default)
         {
-            return await basketRepository.StoreBasketAsync(basket, cancellationToken);
+            await basketRepository.StoreBasketAsync(basket, cancellationToken);
+            await cache.SetStringAsync(basket.UserName, JsonSerializer.Serialize(basket), cancellationToken);
+            return basket;
         }
 
         public async Task<bool> DeleteBasketAsync(string userName, CancellationToken cancellationToken = default)
         {
-            return await basketRepository.DeleteBasketAsync(userName, cancellationToken);
+            await basketRepository.DeleteBasketAsync(userName, cancellationToken);
+            await cache.RemoveAsync(userName, cancellationToken);
+            return true;
         }
     }
 }

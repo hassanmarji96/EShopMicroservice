@@ -2,7 +2,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var assembly = typeof(Program).Assembly;
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    //options.InstanceName = "BasketAPI";
+});
+
 
 builder.Services.AddCarter();
 builder.Services.AddMediatR(cfg =>
@@ -22,9 +31,8 @@ builder.Services.AddMarten(options =>
     options.Schema.For<ShoppingCart>().Identity(x => x.UserName);
 }).UseLightweightSessions();
 
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-//builder.Services.AddHealthChecks()
-//    .AddNpgSql(connectionString);
+
+// ---------------------------------------------------------------------------------------------------------------
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
