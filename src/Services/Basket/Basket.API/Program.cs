@@ -1,14 +1,19 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var assembly = typeof(Program).Assembly;
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
+var connectionString = builder.Configuration.GetConnectionString("Database")!;
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    options.Configuration = redisConnectionString;
     //options.InstanceName = "BasketAPI";
 });
 
@@ -23,7 +28,6 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddValidatorsFromAssembly(assembly);
 
-var connectionString = builder.Configuration.GetConnectionString("Database")!;
 builder.Services.AddMarten(options =>
 {
     options.Connection(connectionString);
@@ -31,13 +35,18 @@ builder.Services.AddMarten(options =>
     options.Schema.For<ShoppingCart>().Identity(x => x.UserName);
 }).UseLightweightSessions();
 
-
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString)
+    .AddRedis(redisConnectionString);
 // ---------------------------------------------------------------------------------------------------------------
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapCarter();
-
 app.UseExceptionHandler(opt => { });
-
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 app.Run();
