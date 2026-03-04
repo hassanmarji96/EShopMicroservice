@@ -34,14 +34,29 @@ namespace Discount.Grpc.Services
             return coupon.Adapt<CouponModel>();
         }
 
-        public override Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+        public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
         {
-            return base.UpdateDiscount(request, context);
+            var coupon = request.Coupon.Adapt<Coupon>();
+            if (coupon is null)
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid request object data"));
+
+            dbContext.Coupons.Update(coupon);
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("[DiscountService] == [UpdateDiscount] --> Discount updated for ID: {Id}, ProductName: {ProductName}, Amount: {Amount}", coupon.Id, coupon.ProductName, coupon.Amount);
+            return coupon.Adapt<CouponModel>();
         }
 
-        public override Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
+        public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
         {
-            return base.DeleteDiscount(request, context);
+            var coupon = await dbContext.Coupons
+                .FirstOrDefaultAsync(c => c.ProductName == request.ProductName);
+            if (coupon is null)
+                throw new RpcException(new Status(StatusCode.NotFound, "Coupon not found"));
+            
+            dbContext.Coupons.Remove(coupon);
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("[DiscountService] == [DeleteDiscount] --> Discount deleted for ProductName: {ProductName}", coupon.ProductName);
+            return new DeleteDiscountResponse { Success = true };
         }
     }
 }
