@@ -35,6 +35,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddGrpcClient<Discount.Grpc.DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    // setup per accettare certificati SSL auto-firmati, utile in ambienti di sviluppo o test
+    var handler = new HttpClientHandler();
+    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+    return handler;
 });
 
 // Cross-cutting concerns

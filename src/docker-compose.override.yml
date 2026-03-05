@@ -53,9 +53,11 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
       - ConnectionStrings__Redis=distributedcache:6379
+      - GrpcSettings__DiscountUrl=https://discount.grpc:8081
     depends_on:
         - basketdb
         - distributedcache
+        - discount.grpc
     ports:
       - "6001:8080"
       - "6061:8081"
@@ -72,8 +74,8 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Data Source=discountdb
     ports:
-      - "6002:8080"
-      - "6062:8081"
+      - "6002:8080" # http
+      - "6062:8081" # https
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
