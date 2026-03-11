@@ -1,6 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+// services and containers registrations
 
-app.MapGet("/", () => "Hello World!");
+
+var app = builder.Build();
+// ----------------------------------------------------------
+// http request pipeline configuration
 
 app.Run();
