@@ -22,6 +22,33 @@
             private set { }
         }
 
+        public static Order Create(OrderId orderId, CustomerId customerId, OrderName orderName, 
+            Address shippingAddress, Address billingAddress, Payment payment)
+        {
+            var order = new Order
+            {
+                Id = orderId,
+                CustomerId = customerId,
+                OrderName = orderName,
+                ShippingAddress = shippingAddress,
+                BillingAddress = billingAddress,
+                Payment = payment,
+                Status = OrderStatus.Pending
+            };
+            order.AddDomainEvent(new OrderCreatedEvent(order));
+            return order;
+        }
+
+        public void Update(Order order, OrderName orderName, Address shippingAddress, 
+            Address billingAddress, Payment payment)
+        {
+            order.OrderName = orderName;
+            order.ShippingAddress = shippingAddress;
+            order.BillingAddress = billingAddress;
+            order.Payment = payment;
+            order.AddDomainEvent(new OrderUpdatedEvent(this));
+        }
+
         /*
          * Aggiungo i metodi all'interno del dominio, in quanto corrisponde all'architettura DDD, 
          * in cui le logiche di business sono incapsulate all'interno del dominio stesso, 
@@ -29,15 +56,19 @@
          * In questo modo, si garantisce che tutte le operazioni sull'aggregato Order siano coerenti e rispettino 
          * le regole di business definite.
         */
-        public void AddOrderItem(OrderItem orderItem)
+        public void Add(ProductId productId, int quantity, decimal price)
         {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(price);
+
+            var orderItem = new OrderItem(this.Id, productId, quantity, price);
             _orderItems.Add(orderItem);
         }
 
-        public void RemoveOrderItem(OrderItemId orderItemId)
+        public void Remove(ProductId productId)
         {
-            var item = _orderItems.FirstOrDefault(x => x.Id == orderItemId);
-            if (item != null) _orderItems.Remove(item);
+            var item = _orderItems.FirstOrDefault(x => x.ProductId == productId);
+            if (item is not null) _orderItems.Remove(item);
         }
 
     }
