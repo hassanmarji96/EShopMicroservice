@@ -21,5 +21,24 @@
             get => OrderItems.Sum(x => x.Price * x.Quantity);
             private set { }
         }
+
+        /*
+         * Aggiungo i metodi all'interno del dominio, in quanto corrisponde all'architettura DDD, 
+         * in cui le logiche di business sono incapsulate all'interno del dominio stesso, 
+         * e non vengono esposte all'esterno. 
+         * In questo modo, si garantisce che tutte le operazioni sull'aggregato Order siano coerenti e rispettino 
+         * le regole di business definite.
+        */
+        public void AddOrderItem(OrderItem orderItem)
+        {
+            _orderItems.Add(orderItem);
+        }
+
+        public void RemoveOrderItem(OrderItemId orderItemId)
+        {
+            var item = _orderItems.FirstOrDefault(x => x.Id == orderItemId);
+            if (item != null) _orderItems.Remove(item);
+        }
+
     }
 }
