@@ -3,9 +3,10 @@ services:
     image: postgres:17-alpine
   basketdb:
     image: postgres:17-alpine
-  
   distributedcache:
     image: redis
+  orderdb:
+    image: mcr.microsoft.com/mssql/server
 
 
   catalogapi:
