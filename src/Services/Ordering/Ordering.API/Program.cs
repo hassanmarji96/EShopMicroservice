@@ -1,6 +1,7 @@
 using Ordering.API;
 using Ordering.Application;
 using Ordering.Infrastructure;
+using Ordering.Infrastructure.Data.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // services and containers registrations
@@ -13,5 +14,12 @@ builder.Services
 var app = builder.Build();
 // ----------------------------------------------------------
 // http request pipeline configuration
+app.UseApiServices();
+
+// esecuzione di automigrazione del db, senza dover eseguire manualmente il comando Add-Migration e Update-Database
+if(app.Environment.IsDevelopment())
+{
+    await app.InitializeDatabaseAsync();
+}
 
 app.Run();
