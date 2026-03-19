@@ -11,7 +11,10 @@ namespace Ordering.Infrastructure
             var connectionString = configuration.GetConnectionString("Database");
 
             services.AddDbContext<OrderingDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            {
+                options.AddInterceptors(new AuditableEntityInterceptor());
+                options.UseSqlServer(connectionString);
+            });
 
             //services.AddScoped<IOrderingDbContext, OrderingDbContext>();
             return services;
