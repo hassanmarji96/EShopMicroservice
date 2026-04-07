@@ -1,6 +1,6 @@
 ﻿namespace Ordering.Infrastructure.Data
 {
-    public class OrderingDbContext : DbContext
+    public class OrderingDbContext : DbContext, IOrderingDbContext
     {
         public OrderingDbContext(DbContextOptions<OrderingDbContext> options) : base(options)
         {

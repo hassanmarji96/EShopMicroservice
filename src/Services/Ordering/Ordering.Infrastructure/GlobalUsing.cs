@@ -8,3 +8,4 @@ global using Ordering.Infrastructure.Data;
 global using Ordering.Domain.Abstraction;
 global using Ordering.Infrastructure.Data.Interceptors;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Ordering.Application.Data;
