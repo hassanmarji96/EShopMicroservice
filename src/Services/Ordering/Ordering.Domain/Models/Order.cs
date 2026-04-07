@@ -39,14 +39,16 @@
             return order;
         }
 
-        public void Update(Order order, OrderName orderName, Address shippingAddress, 
-            Address billingAddress, Payment payment)
+        public void Update(OrderName orderName, Address shippingAddress, 
+            Address billingAddress, Payment payment, OrderStatus status)
         {
-            order.OrderName = orderName;
-            order.ShippingAddress = shippingAddress;
-            order.BillingAddress = billingAddress;
-            order.Payment = payment;
-            order.AddDomainEvent(new OrderUpdatedEvent(this));
+            OrderName = orderName;
+            ShippingAddress = shippingAddress;
+            BillingAddress = billingAddress;
+            Payment = payment;
+            Status = status;
+
+            AddDomainEvent(new OrderUpdatedEvent(this));
         }
 
         /*
