@@ -5,7 +5,7 @@
         public string CardNumber { get; } = default!;
         public string? CardName { get; } = default!;
         public string ExpirationDate { get; } = default!;
-        public string Cvv { get; } = default!;
+        public string CVV { get; } = default!;
         public int PaymentMethod { get; } = default!;
 
         /// <summary>
@@ -27,7 +27,7 @@
             CardNumber = cardNumber;
             CardName = cardName;
             ExpirationDate = expirationDate;
-            Cvv = cvv;
+            CVV = cvv;
             PaymentMethod = paymentMethod;
         }
 

@@ -39,9 +39,9 @@
                         addressBuilder.Property(a => a.LastName)
                             .HasMaxLength(50)
                             .IsRequired();
-                        addressBuilder.Property(a => a.Email)
+                        addressBuilder.Property(a => a.EmailAddress)
                             .HasMaxLength(50);
-                        addressBuilder.Property(a => a.AddresLine)
+                        addressBuilder.Property(a => a.AddressLine)
                             .HasMaxLength(200)
                             .IsRequired();
                         addressBuilder.Property(a => a.Country)
@@ -62,9 +62,9 @@
                         addressBuilder.Property(a => a.LastName)
                             .HasMaxLength(50)
                             .IsRequired();
-                        addressBuilder.Property(a => a.Email)
+                        addressBuilder.Property(a => a.EmailAddress)
                             .HasMaxLength(50);
-                        addressBuilder.Property(a => a.AddresLine)
+                        addressBuilder.Property(a => a.AddressLine)
                             .HasMaxLength(200)
                             .IsRequired();
                         addressBuilder.Property(a => a.Country)
@@ -86,7 +86,7 @@
                             .IsRequired();
                         paymentBuilder.Property(p => p.ExpirationDate)
                             .HasMaxLength(10);
-                        paymentBuilder.Property(p => p.Cvv)
+                        paymentBuilder.Property(p => p.CVV)
                             .HasMaxLength(3);
                         paymentBuilder.Property(p => p.PaymentMethod);
                     });
