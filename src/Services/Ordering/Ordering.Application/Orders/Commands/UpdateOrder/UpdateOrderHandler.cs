@@ -12,7 +12,8 @@
                 throw new OrderNotFoundException(command.Order.Id);
 
             UpdateOrderWithNewValues(order, command.Order);
-            dbContext.Orders.Update(order);
+            // Rimossa la chiamata ridondante a dbContext.Orders.Update(order)
+            // L'entità è già tracciata da FindAsync → EF Core rileva i cambiamenti automaticamente
             await dbContext.SaveChangesAsync(cancellationToken);
             return new UpdateOrderResult(true);
         }
