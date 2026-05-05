@@ -14,7 +14,7 @@ namespace Basket.API.Basket.CheckoutBasket
         }
     }
 
-    public class CheckoutBasketCommandHandler(BasketRepository basketRepository, IPublishEndpoint publishEndpoint) 
+    public class CheckoutBasketCommandHandler(IBasketRepository basketRepository, IPublishEndpoint publishEndpoint) 
         : ICommandHandler<CheckoutBasketCommand, CheckoutBasketResult>
     {
         public async Task<CheckoutBasketResult> Handle(CheckoutBasketCommand command, CancellationToken cancellationToken)
